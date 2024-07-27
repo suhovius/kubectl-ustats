@@ -17,11 +17,11 @@ Clone git repository
 
 Make script executable
 
-`chmod +x kubectl-ustats/scripts/ustats`
+`chmod +x kubectl-ustats/scripts/kubeplugin`
 
 Create symlink to bin folder where kubectl expects this executable to be located:
 
-`sudo ln -sf "$(pwd)/kubectl-ustats/scripts/ustats" /usr/local/bin/kubectl-ustats`
+`sudo ln -sf "$(pwd)/kubectl-ustats/scripts/kubeplugin" /usr/local/bin/kubectl-ustats`
 
 ### Usage example
 
