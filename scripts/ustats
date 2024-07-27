@@ -11,23 +11,68 @@ then
     exit 1
 fi
 
+if [ "$RESOURCE_TYPE" != "pod" ] && [ "$RESOURCE_TYPE" != "node" ]
+then
+    echo Resource type can be either 'pod' or 'node'
+    exit 1
+fi
+
 if [[ ! "$NAMESPACE" ]]
 then
     echo Namespace must be provided as second argument
     exit 1
 fi
 
-echo "Resource, Namespace, Name, CPU, Memory"
+printLine () {
+  printf $1
+  printf '%.s──' {1..26}
+  printf $2
+  printf '%.s──' {1..9}
+  printf $3
+  printf '%.s──' {1..6}
+  printf $4
+  printf '%.s──' {1..6}
+  printf $5
+  printf '\n'
+}
+
+formatColumns () {
+  printf "│ %-50s │ %-16s │ %-10s │ %-10s │\n" $1 $2 $3 $4
+}
+
+printLine "┌" "┬" "┬" "┬" "┐"
+
+formatColumns "Resource" "Namespace" "CPU" "Memory"
+
+printLine "├" "┼" "┼" "┼" "┤"
 
 # Retrieve resource usage statistics from Kubernetes
-kubectl top $RESOURCE_TYPE -n $NAMESPACE | tail -n +2 | while read line
-do
-  # Extract CPU and memory usage from the output
-  NAME=$(echo $line | awk '{print $1}')
-  CPU=$(echo $line | awk '{print $2}')
-  MEMORY=$(echo $line | awk '{print $3}')
+if [ "$RESOURCE_TYPE" == "pod" ]
+then
+  kubectl top $RESOURCE_TYPE -n $NAMESPACE | tail -n +2 | while read line
+  do
+    # Extract CPU and memory usage from the output
+    NAME=$(echo $line | awk '{print $1}')
+    CPU=$(echo $line | awk '{print $2}')
+    MEMORY=$(echo $line | awk '{print $3}')
 
-  # Output the statistics to the console
-  echo $NAME, $NAMESPACE, $CPU, $MEMORY
-done
+    # Output the statistics to the console
+    formatColumns $NAME $NAMESPACE $CPU $MEMORY
+  done
+fi
 
+if [ "$RESOURCE_TYPE" == "node" ]
+then
+  kubectl top $RESOURCE_TYPE -n $NAMESPACE | tail -n +2 | while read line
+  do
+    # Extract CPU and memory usage from the output
+    NAME=$(echo $line | awk '{print $1}')
+    CPU=$(echo $line | awk '{print $2}')
+    MEMORY=$(echo $line | awk '{print $4}')
+
+    # Output the statistics to the console
+    formatColumns $NAME $NAMESPACE $CPU $MEMORY
+  done
+fi
+
+printLine "└" "┴" "┴" "┴" "┘"
