@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Define command-line arguments
+
+RESOURCE_TYPE=$1
+NAMESPACE=$2
+
+if [[ ! "$RESOURCE_TYPE" ]]
+then
+    echo Resource type must be provided as first argument
+    exit 1
+fi
+
+if [[ ! "$NAMESPACE" ]]
+then
+    echo Namespace must be provided as second argument
+    exit 1
+fi
+
+echo "Resource, Namespace, Name, CPU, Memory"
+
+# Retrieve resource usage statistics from Kubernetes
+kubectl top $RESOURCE_TYPE -n $NAMESPACE | tail -n +2 | while read line
+do
+  # Extract CPU and memory usage from the output
+  NAME=$(echo $line | awk '{print $1}')
+  CPU=$(echo $line | awk '{print $2}')
+  MEMORY=$(echo $line | awk '{print $3}')
+
+  # Output the statistics to the console
+  echo $NAME, $NAMESPACE, $CPU, $MEMORY
+done
+
