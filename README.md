@@ -1,7 +1,27 @@
 # ustats
 DevOps Course Task. kubectl plugin that returns system resource usage status by resources
 
-It is just a simpel kubectl plugin implementation that has fixed formatting and might not work well with long values in the columns
+It is just a simple kubectl plugin implementation that has fixed formatting and might not work well with long values in the columns.
+
+### Disclaimer
+
+This is a test project. And normal plugin must be able installed via `krew` installer.
+
+Read more here: [https://krew.sigs.k8s.io/docs/developer-guide/plugin-manifest/](https://krew.sigs.k8s.io/docs/developer-guide/plugin-manifest/)
+
+### Installation
+
+Clone git repository
+
+`git clone git@github.com:suhovius/kubectl-ustats.git`
+
+Make script executable
+
+`chmod +x kubectl-ustats/scripts/ustats`
+
+Create symlink to bin folder where kubectl expects this executable to be located:
+
+`sudo ln -sf "$(pwd)/kubectl-ustats/scripts/ustats" /usr/local/bin/kubectl-ustats`
 
 ### Usage example
 
